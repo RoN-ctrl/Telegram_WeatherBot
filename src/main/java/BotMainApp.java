@@ -1,17 +1,13 @@
-import config.BotConfig;
-import exceptions.IncorrectCityNameException;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import service.impl.WeatherServiceImpl;
+import bot.Bot;
+import lombok.SneakyThrows;
+import org.telegram.telegrambots.ApiContextInitializer;
+import org.telegram.telegrambots.meta.TelegramBotsApi;
 
 public class BotMainApp {
+    @SneakyThrows
     public static void main(String[] args) {
-        var annotationConfigApplicationContext = new AnnotationConfigApplicationContext(BotConfig.class);
-        var weatherService = annotationConfigApplicationContext.getBean(WeatherServiceImpl.class);
-
-        try {
-            System.out.println(weatherService.getByCityName("Львів"));
-        } catch (IncorrectCityNameException e) {
-            System.out.println(e.getMessage());
-        }
+        ApiContextInitializer.init();
+        TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
+        telegramBotsApi.registerBot(new Bot());
     }
 }

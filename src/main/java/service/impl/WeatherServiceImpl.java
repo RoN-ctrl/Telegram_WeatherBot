@@ -14,6 +14,7 @@ import java.net.http.HttpResponse;
 
 @Service
 public class WeatherServiceImpl implements WeatherService {
+
     @Value("${api.url}")
     private String apiUrl;
 
@@ -37,7 +38,8 @@ public class WeatherServiceImpl implements WeatherService {
 
         WeatherResponse weathers = gson.fromJson(response.body(), WeatherResponse.class);
 
-        return weathers.data[0];
+        int ARRAY_INDEX = 0;
+        return weathers.data[ARRAY_INDEX];
     }
 
     static class WeatherResponse {
