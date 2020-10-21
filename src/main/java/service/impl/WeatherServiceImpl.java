@@ -3,7 +3,6 @@ package service.impl;
 import com.google.gson.Gson;
 import lombok.SneakyThrows;
 import model.Weather;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import service.WeatherService;
 
@@ -15,12 +14,6 @@ import java.net.http.HttpResponse;
 @Service
 public class WeatherServiceImpl implements WeatherService {
 
-    @Value("${api.url}")
-    private String apiUrl;
-
-    @Value("${api.key}")
-    private String apiKey;
-
     @SneakyThrows
     public Weather getByCityName(String city) {
         validateCityName(city);
@@ -29,6 +22,8 @@ public class WeatherServiceImpl implements WeatherService {
         var httpClient = HttpClient.newBuilder()
                 .build();
 
+        String apiUrl = "http://api.weatherbit.io/v2.0/current?city=";
+        String apiKey = "&key=d3a84b62dbda4bf1a4eb904e02edfa36";
         var request = HttpRequest.newBuilder()
                 .GET()
                 .uri(URI.create(apiUrl + city + apiKey))
@@ -38,8 +33,8 @@ public class WeatherServiceImpl implements WeatherService {
 
         WeatherResponse weathers = gson.fromJson(response.body(), WeatherResponse.class);
 
-        int ARRAY_INDEX = 0;
-        return weathers.data[ARRAY_INDEX];
+        int arrayIndex = 0;
+        return weathers.data[arrayIndex];
     }
 
     static class WeatherResponse {
