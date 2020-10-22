@@ -9,7 +9,7 @@ import service.impl.WeatherServiceImpl;
 
 @Service
 public class Bot extends TelegramLongPollingBot {
-    private WeatherServiceImpl service = new WeatherServiceImpl();
+    private final WeatherServiceImpl service = new WeatherServiceImpl();
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -20,9 +20,14 @@ public class Bot extends TelegramLongPollingBot {
         System.out.println(from);
         System.out.println(text);
 
-        var weatherInfo = service.getByCityName(text).toString();
 
-        sendMessage(chatId, weatherInfo);
+        var weatherInfo = service.getByCityName(text);
+        if (weatherInfo.getCity_name() == null) {
+            var incorrectInput = "Incorrect city name '" + text + "'";
+            sendMessage(chatId, incorrectInput);
+        } else {
+            sendMessage(chatId, weatherInfo.toString());
+        }
     }
 
     @SneakyThrows

@@ -10,7 +10,7 @@ public interface WeatherService {
 
     default void validateCityName(String city) {
         if (!city.matches(CITY_REGEX)) {
-            throw new IncorrectCityNameException(String.format("Incorrect city name %s", city));
+            throw new IncorrectCityNameException(String.format("Incorrect city name '%s'", city));
         }
     }
 }
