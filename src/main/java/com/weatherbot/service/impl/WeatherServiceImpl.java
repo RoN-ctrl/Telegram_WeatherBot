@@ -1,11 +1,11 @@
-package service.impl;
+package com.weatherbot.service.impl;
 
 import com.google.gson.Gson;
-import exceptions.IncorrectCityNameException;
+import com.weatherbot.exceptions.IncorrectCityNameException;
+import com.weatherbot.model.Weather;
+import com.weatherbot.service.WeatherService;
 import lombok.SneakyThrows;
-import model.Weather;
 import org.springframework.stereotype.Service;
-import service.WeatherService;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -14,9 +14,8 @@ import java.net.http.HttpResponse;
 
 @Service
 public class WeatherServiceImpl implements WeatherService {
-
     @SneakyThrows
-    public Weather getByCityName(String city) {
+    public Weather[] getByCityName(String city) {
         try {
             validateCityName(city);
             var gson = new Gson();
@@ -24,22 +23,23 @@ public class WeatherServiceImpl implements WeatherService {
             var httpClient = HttpClient.newBuilder()
                     .build();
 
-            String apiUrl = "http://api.weatherbit.io/v2.0/current?city=";
+            String apiUrl = "https://api.weatherbit.io/v2.0/forecast/daily?city=";
             String apiKey = "&key=d3a84b62dbda4bf1a4eb904e02edfa36";
+            String daysUrl = "&days=";
+            int daysForecast = 3;
             var request = HttpRequest.newBuilder()
                     .GET()
-                    .uri(URI.create(apiUrl + city + apiKey))
+                    .uri(URI.create(apiUrl + city + apiKey + daysUrl + daysForecast))
                     .build();
 
             var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
             WeatherResponse weathers = gson.fromJson(response.body(), WeatherResponse.class);
 
-            int arrayIndex = 0;
-            return weathers.data[arrayIndex];
+            return weathers.data;
         } catch (IncorrectCityNameException e) {
             System.err.println(e.getMessage());
-            return new Weather();
+            return new Weather[]{new Weather()};
         }
     }
 

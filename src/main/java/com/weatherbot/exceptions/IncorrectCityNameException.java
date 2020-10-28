@@ -1,4 +1,4 @@
-package exceptions;
+package com.weatherbot.exceptions;
 
 public class IncorrectCityNameException extends RuntimeException {
 

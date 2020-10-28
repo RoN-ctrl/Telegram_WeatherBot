@@ -1,15 +1,24 @@
-package bot;
+package com.weatherbot.bot;
 
+import com.weatherbot.model.Weather;
+import com.weatherbot.service.impl.WeatherServiceImpl;
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import service.impl.WeatherServiceImpl;
+
+import java.util.Arrays;
 
 @Service
 public class Bot extends TelegramLongPollingBot {
-    private final WeatherServiceImpl service = new WeatherServiceImpl();
+    private final WeatherServiceImpl service;
+
+    @Autowired
+    public Bot(WeatherServiceImpl service) {
+        this.service = service;
+    }
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -22,11 +31,16 @@ public class Bot extends TelegramLongPollingBot {
 
 
         var weatherInfo = service.getByCityName(text);
-        if (weatherInfo.getCity_name() == null) {
+
+        System.out.println(Arrays.toString(weatherInfo));
+
+        if (weatherInfo[0].getValid_date() == null) {
             var incorrectInput = "Incorrect city name '" + text + "'";
             sendMessage(chatId, incorrectInput);
         } else {
-            sendMessage(chatId, weatherInfo.toString());
+            for (Weather weather : weatherInfo) {
+                sendMessage(chatId, weather.toString());
+            }
         }
     }
 
